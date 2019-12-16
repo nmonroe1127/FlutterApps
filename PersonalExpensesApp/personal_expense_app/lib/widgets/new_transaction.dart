@@ -68,7 +68,7 @@ class _NewTransactionState extends State<NewTransaction> {
             ),
             FlatButton(
               child: Text('Add Transaction'),
-              textColor: Colors.purple,
+              textColor: Theme.of(context).primaryColor,
               //Data isnt being dumped so you dont need the anonymous function
               //only passing reference here beacause not anonymous
               onPressed: submitData,        

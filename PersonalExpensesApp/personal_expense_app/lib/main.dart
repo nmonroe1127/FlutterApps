@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:personal_expense_app/widgets/new_transaction.dart';
 import 'package:personal_expense_app/widgets/transaction_list.dart';
 import './models/transaction.dart';
+import './widgets/chart.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,7 +17,22 @@ class MyApp extends StatelessWidget {
         //Swatch gives multiple shades of the given color
         primarySwatch: Colors.red,
         accentColor: Colors.orange,
-        fontFamily: 'QuickSand'
+        fontFamily: 'QuickSand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+              title: TextStyle(
+                fontFamily: 'OpenSans',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+        appBarTheme: AppBarTheme(
+          textTheme: ThemeData.light().textTheme.copyWith(
+                title: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 20,
+                ),
+              ),
+        ),
       ),
       home: MyHomePage(),
     );
@@ -30,19 +46,30 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    Transaction(
-      id: 't1',
-      title: 'New Shoes',
-      amount: 69.99,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'Weekly Groceries',
-      amount: 16.53,
-      date: DateTime.now(),
-    ),
+    // Transaction(
+    //   id: 't1',
+    //   title: 'New Shoes',
+    //   amount: 69.99,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: 't2',
+    //   title: 'Weekly Groceries',
+    //   amount: 16.53,
+    //   date: DateTime.now(),
+    // ),
   ];
+
+  List<Transaction> get _recentTransactions {
+    //WE could use a for loop in here but we gonna use an alternative
+    return _userTransactions.where((transaction) {
+      return transaction.date.isAfter(
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
 
   void _addNewTransaction(String transTitle, double transAmount) {
     final newTransaction = Transaction(
@@ -62,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //Again dont care abouyt the parameter because its never used
       builder: (_) {
         return GestureDetector(
-          //Do nothing when this tapping occurs, avoids clossing when 
+          //Do nothing when this tapping occurs, avoids clossing when
           //tapping on the sheet itself
           onTap: () {},
           child: NewTransaction(_addNewTransaction),
@@ -96,14 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // mainAxisAlignment: MainAxisAlignment.spaceAround,
           // crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Colors.blue,
-                child: Text('CHART!'),
-                elevation: 5,
-              ),
-            ),
+            Chart(_recentTransactions),
             TransactionList(_userTransactions),
           ],
         ),
